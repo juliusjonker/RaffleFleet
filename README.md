@@ -1,6 +1,6 @@
 # RaffleFleet
 
-Full source code for [**RaffleFleet**](https://x.com/RaffleFleet), a CLI program for automating large amounts of online raffle entries for limited-edition items (e.g. sneakers). Developed from 2022–2023, with ~120 bèta users at peak.
+Full source code for [**RaffleFleet**](https://x.com/RaffleFleet), a CLI program for automating large amounts of online raffle entries for limited-edition items (mostly sneakers). Developed from 2022–2023, with ~120 bèta users at peak.
 
 ## Repository Structure
 - **/api**: REST API for authentication through Whop and interactions with the DynamoDB database, hosted on AWS Lambda.
