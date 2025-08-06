@@ -1,0 +1,9 @@
+cryptography==41.0.1
+psutil==5.9.5
+lzstring==1.0.4
+PyJWT==2.7.0
+python-dateutil==2.8.2
+colored==1.4.4
+imap-tools==1.0.0
+selenium==4.10.0
+pypresence==4.2.1

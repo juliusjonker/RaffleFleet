@@ -1,0 +1,12 @@
+# -*- coding: utf-8 -*-
+WEBSITE_DOMAIN = ""
+API_DOMAIN = ""
+
+APP_JWT_KEY = ""
+WEB_JWT_KEY = ""
+
+TWOCAPTCHA_REF_ID = 0
+ANTICAPTCHA_REF_ID = 0
+CAPSOLVER_REF_ID = ""
+
+MAPBOX_KEY = ""
