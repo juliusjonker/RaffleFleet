@@ -1,0 +1,39 @@
+name: Serverless Deployment
+
+on:
+  push:
+    branches:
+      - prod
+
+env:
+  PYTHON_VERSION: 3.9.16
+  NODE_JS_VERSION: 18.14.1
+  SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python v${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Set up Node.js v${{ env.NODE_JS_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_JS_VERSION }}
+          cache: npm
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Node.js dependencies
+        run: npm install
+
+      - name: Deploy to Serverless
+        run: npx serverless deploy

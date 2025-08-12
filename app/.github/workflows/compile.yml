@@ -1,0 +1,115 @@
+name: App Compilation
+
+on:
+  push:
+    branches:
+      - prod
+
+env:
+  APP_NAME: RaffleFleet
+  PYTHON_VERSION: 3.10.10
+  AWS_S3_REGION: eu-central-1
+  AWS_S3_BUCKET: rafflefleet
+
+jobs:
+  compile-windows:
+    name: Compile Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python v${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Compile app
+        run: pyinstaller --onefile 
+          --name ${{ env.APP_NAME }} --icon icon.ico 
+          --add-data "dependencies/*.*;dependencies" 
+          --add-binary "dependencies/windows/*;dependencies/windows" 
+          "src/main.py"
+
+      - name: Upload executable to AWS
+        uses: hkusu/s3-upload-action@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_S3_REGION }}
+          aws-bucket: ${{ env.AWS_S3_BUCKET }}
+          bucket-root: /
+          file-path: ./dist/${{ env.APP_NAME }}.exe
+          destination-dir: /download/dev/windows
+
+  compile-macos-intel:
+    name: Compile MacOS (Intel)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python v${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Compile app
+        run: pyinstaller --onefile
+          --name ${{ env.APP_NAME }}
+          --add-data "dependencies/*.*:dependencies" 
+          --add-binary "dependencies/macos_x86/*:dependencies/macos_x86" 
+          "src/main.py"
+
+      - name: Upload executable to AWS
+        uses: hkusu/s3-upload-action@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_S3_REGION }}
+          aws-bucket: ${{ env.AWS_S3_BUCKET }}
+          bucket-root: /
+          file-path: ./dist/${{ env.APP_NAME }}
+          destination-dir: /download/dev/macos-x86
+
+  compile-macos-apple-silicon:
+    name: Compile MacOS (Apple Silicon)
+    runs-on: macos-apple-silicon-personal
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python v${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Compile app
+        run: pyinstaller --onefile
+          --name ${{ env.APP_NAME }}
+          --add-data "dependencies/*.*:dependencies" 
+          --add-binary "dependencies/macos_arm/*:dependencies/macos_arm" 
+          "src/main.py"
+
+      - name: Upload executable to AWS
+        uses: hkusu/s3-upload-action@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_S3_REGION }}
+          aws-bucket: ${{ env.AWS_S3_BUCKET }}
+          bucket-root: /
+          file-path: ./dist/${{ env.APP_NAME }}
+          destination-dir: /download/dev/macos-arm
